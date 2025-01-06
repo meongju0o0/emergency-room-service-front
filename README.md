@@ -1,6 +1,6 @@
 # Emergency Room Comprehensive Situation Information Service
 
-Emergency Room Comprehensive Situation Information Service
+Development of emergency room comprehensive situation information service using dart/flutter
 
 ## Getting Started
 
