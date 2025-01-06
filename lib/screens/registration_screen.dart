@@ -6,6 +6,11 @@ class RegistrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    final TextEditingController firstNameController = TextEditingController();
+    final TextEditingController lastNameController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('기본 정보'),
@@ -17,16 +22,65 @@ class RegistrationScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 기존 입력 폼 유지
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.purple.shade50,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const TextField(
+              child: TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  hintText: 'e-mail',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(15),
+                  suffixIcon: Icon(Icons.close),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                controller: passwordController,
+                obscureText: true,
                 decoration: InputDecoration(
-                  hintText: 'email',
+                  hintText: 'password',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(15),
+                  suffixIcon: Icon(Icons.close),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                controller: firstNameController,
+                decoration: InputDecoration(
+                  hintText: 'first name',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(15),
+                  suffixIcon: Icon(Icons.close),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                controller: lastNameController,
+                decoration: InputDecoration(
+                  hintText: 'last name',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(15),
                   suffixIcon: Icon(Icons.close),

@@ -15,20 +15,6 @@ class LoginScreen extends StatelessWidget {
         backgroundColor: Colors.purple.shade50,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            // 메뉴 버튼 동작
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              // 프로필 버튼 동작
-            },
-          ),
-        ],
       ),
       body: Center(
         child: Column(
