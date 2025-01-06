@@ -1,6 +1,6 @@
-# Emergency Room Comprehensive Situation Inquiry Service
+# Emergency Room Comprehensive Situation Information Service
 
-Emergency room comprehensive situation inquiry service
+Emergency Room Comprehensive Situation Information Service
 
 ## Getting Started
 
