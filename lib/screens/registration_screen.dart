@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'disease_code_screen.dart';
 
 class RegistrationScreen extends StatelessWidget {
   const RegistrationScreen({super.key});
@@ -16,6 +17,7 @@ class RegistrationScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // 기존 입력 폼 유지
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
@@ -31,56 +33,15 @@ class RegistrationScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.purple.shade50,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15),
-                  suffixIcon: Icon(Icons.close),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.purple.shade50,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  hintText: 'First Name',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15),
-                  suffixIcon: Icon(Icons.close),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.purple.shade50,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  hintText: 'Last Name',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15),
-                  suffixIcon: Icon(Icons.close),
-                ),
-              ),
-            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // 다음 버튼 동작
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DiseaseCodeScreen(),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,

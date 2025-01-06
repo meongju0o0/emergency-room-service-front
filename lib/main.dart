@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Login App',
       theme: ThemeData(primarySwatch: Colors.purple),
-      home: const MainScreen(), // 1번 화면
+      home: const MainScreen(),
     );
   }
 }
