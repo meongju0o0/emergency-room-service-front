@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
+import 'symptom_input_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('로그인'),
@@ -31,12 +34,47 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  hintText: 'email',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(15),
+                  suffixIcon: Icon(Icons.close),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  hintText: 'Password',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(15),
+                  suffixIcon: Icon(Icons.close),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // 로그인 버튼을 눌렀을 때 HomeScreen으로 이동
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const SymptomInputScreen(),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(
