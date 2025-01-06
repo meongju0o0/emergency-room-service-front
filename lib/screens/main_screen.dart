@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'registration_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -40,7 +41,10 @@ class MainScreen extends StatelessWidget {
                 const SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: () {
-                    // 회원가입 버튼 동작
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegistrationScreen()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
