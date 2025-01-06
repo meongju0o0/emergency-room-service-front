@@ -10,31 +10,28 @@ class MedicationScreen extends StatefulWidget {
 
 class _MedicationScreenState extends State<MedicationScreen> {
   final TextEditingController _medicationController = TextEditingController();
-  final List<String> _currentMedications = []; // 추가된 약물 목록
-  final List<String> _dummyMedicationCodes = [ // 더미 데이터
+  final List<String> _currentMedications = [];
+  final List<String> _dummyMedicationCodes = [
     'M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07'
   ];
-  List<String> _filteredMedicationCodes = []; // 필터링된 약물 코드 리스트
+  List<String> _filteredMedicationCodes = [];
 
   @override
   void initState() {
     super.initState();
-    // 초기화 시 더미 데이터를 필터링 리스트에 복사
     _filteredMedicationCodes = List.from(_dummyMedicationCodes);
   }
 
-  // 약물 코드를 추가하는 함수
   void _addMedication(String code) {
     if (code.isNotEmpty && !_currentMedications.contains(code)) {
       setState(() {
-        _currentMedications.add(code); // 약물 코드 추가
-        _medicationController.clear(); // 입력 필드 초기화
-        _filterMedications(''); // 필터링 재설정
+        _currentMedications.add(code);
+        _medicationController.clear();
+        _filterMedications('');
       });
     }
   }
 
-  // 검색어에 따라 약물 코드 필터링
   void _filterMedications(String query) {
     setState(() {
       if (query.isEmpty) {
@@ -58,7 +55,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
       ),
       body: Column(
         children: [
-          // 검색창 및 검색 결과 리스트
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -82,7 +78,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
                 ),
                 const SizedBox(height: 10),
                 Container(
-                  height: 200, // 검색 결과 리스트에 고정 높이 설정
+                  height: 200,
                   decoration: BoxDecoration(
                     color: Colors.purple.shade50,
                     borderRadius: BorderRadius.circular(10),
@@ -108,7 +104,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          // 현재 추가된 약물 리스트
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -142,7 +137,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          // 완료 버튼 추가
           ElevatedButton(
             onPressed: () {
               Navigator.push(

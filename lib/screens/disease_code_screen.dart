@@ -10,31 +10,28 @@ class DiseaseCodeScreen extends StatefulWidget {
 
 class _DiseaseCodeScreenState extends State<DiseaseCodeScreen> {
   final TextEditingController _diseaseCodeController = TextEditingController();
-  final List<String> _currentDiseaseCodes = []; // 추가된 질병 코드
-  final List<String> _dummyDiseaseCodes = [ // 더미 데이터
+  final List<String> _currentDiseaseCodes = [];
+  final List<String> _dummyDiseaseCodes = [
     'A01', 'A02', 'B01', 'B02', 'C01', 'C02', 'D01'
   ];
-  List<String> _filteredDiseaseCodes = []; // 필터링된 질병 코드 리스트
+  List<String> _filteredDiseaseCodes = [];
 
   @override
   void initState() {
     super.initState();
-    // 초기화 시 더미 데이터를 필터링 리스트에 복사
     _filteredDiseaseCodes = List.from(_dummyDiseaseCodes);
   }
 
-  // 질병 코드를 추가하는 함수
   void _addDiseaseCode(String code) {
     if (code.isNotEmpty && !_currentDiseaseCodes.contains(code)) {
       setState(() {
-        _currentDiseaseCodes.add(code); // 질병 코드 추가
-        _diseaseCodeController.clear(); // 입력 필드 초기화
-        _filterDiseaseCodes(''); // 필터링 재설정
+        _currentDiseaseCodes.add(code);
+        _diseaseCodeController.clear();
+        _filterDiseaseCodes('');
       });
     }
   }
 
-  // 검색어에 따라 질병 코드 필터링
   void _filterDiseaseCodes(String query) {
     setState(() {
       if (query.isEmpty) {
@@ -58,7 +55,6 @@ class _DiseaseCodeScreenState extends State<DiseaseCodeScreen> {
       ),
       body: Column(
         children: [
-          // 검색창 및 검색 결과 리스트
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -108,7 +104,6 @@ class _DiseaseCodeScreenState extends State<DiseaseCodeScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          // 현재 추가된 질병 코드 리스트
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

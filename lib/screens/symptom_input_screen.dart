@@ -26,12 +26,12 @@ class _SymptomInputScreenState extends State<SymptomInputScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 20),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.grey.shade300, // 밝은 회색
+              color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
               controller: _symptomController,
-              maxLines: 5, // 텍스트 박스 크기 줄임
+              maxLines: 5,
               decoration: const InputDecoration(
                 hintText: '증상을 입력하세요...',
                 border: InputBorder.none,

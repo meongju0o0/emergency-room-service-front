@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Login App',
+      title: 'Emergency Room Comprehensive Situation Information Service',
       theme: ThemeData(primarySwatch: Colors.purple),
       home: const MainScreen(),
     );
