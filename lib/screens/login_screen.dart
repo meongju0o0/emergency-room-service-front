@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import '../utils/dialog_utils.dart';
+import '../utils/token_utils.dart';
+
 import 'symptom_input_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -8,6 +14,66 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+
+    Future<void> login() async {
+      final email = emailController.text.trim();
+      final password = passwordController.text.trim();
+
+      if (email.isEmpty || password.isEmpty) {
+        if (context.mounted) {
+          showErrorDialog(context, 'Please fill in both fields');
+        }
+        return;
+      }
+
+      try {
+        const url = 'http://10.0.2.2:8080/users/read';
+
+        final body = jsonEncode({
+          'email': email,
+          'password': password,
+        });
+
+        final response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: body,
+        );
+
+        if (!context.mounted) return;
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+
+          if (data['token'] != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SymptomInputScreen(
+                  token: encodeToken(data['token']),
+                  email: email,
+                ),
+              ),
+            );
+
+          } else {
+            showErrorDialog(context, 'Unexpected error occurred.');
+          }
+        } else {
+          final errorData = jsonDecode(response.body);
+          showErrorDialog(
+            context,
+            errorData['error'] ?? 'Invalid credentials',
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          showErrorDialog(context, 'Failed to connect to the server.');
+        }
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -55,14 +121,7 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SymptomInputScreen(),
-                  ),
-                );
-              },
+              onPressed: login,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
                 shape: RoundedRectangleBorder(

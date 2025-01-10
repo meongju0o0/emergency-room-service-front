@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'symptom_input_screen.dart';
+import 'login_screen.dart';
 
 class MedicationScreen extends StatefulWidget {
   const MedicationScreen({super.key});
@@ -141,7 +141,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SymptomInputScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
             style: ElevatedButton.styleFrom(

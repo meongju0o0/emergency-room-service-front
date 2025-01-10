@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SymptomInputScreen extends StatefulWidget {
-  const SymptomInputScreen({super.key});
+  final String token;
+  final String email;
+
+  const SymptomInputScreen({super.key, required this.token, required this.email});
 
   @override
   State<SymptomInputScreen> createState() => _SymptomInputScreenState();
@@ -9,6 +14,76 @@ class SymptomInputScreen extends StatefulWidget {
 
 class _SymptomInputScreenState extends State<SymptomInputScreen> {
   final TextEditingController _symptomController = TextEditingController();
+  String? _responseText;
+  bool _isLoading = false;
+
+  Future<void> _submitSymptom() async {
+    final symptom = _symptomController.text.trim();
+
+    if (symptom.isEmpty) {
+      _showErrorDialog('증상을 입력하세요.');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _responseText = null;
+    });
+
+    try {
+      const url = 'http://10.0.2.2:8080/medical/nl_query';
+
+      final body = jsonEncode({
+        'email': widget.email,
+        'query': symptom,
+      });
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        setState(() {
+          _responseText = responseData['result'] ?? '서버로부터 적절한 응답이 없습니다.';
+        });
+      } else {
+        final errorData = jsonDecode(response.body);
+        _showErrorDialog(
+          errorData['error'] ?? '서버 요청에 실패했습니다.',
+        );
+      }
+    } catch (e) {
+      _showErrorDialog('서버 연결에 실패했습니다.');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('오류'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,30 +95,30 @@ class _SymptomInputScreenState extends State<SymptomInputScreen> {
         centerTitle: true,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: TextField(
-              controller: _symptomController,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: '증상을 입력하세요...',
-                border: InputBorder.none,
+          // 증상 입력 텍스트 박스 (상단)
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
               ),
-              style: const TextStyle(fontSize: 16),
+              child: TextField(
+                controller: _symptomController,
+                maxLines: 5,
+                decoration: const InputDecoration(
+                  hintText: '증상을 입력하세요...',
+                  border: InputBorder.none,
+                ),
+                style: const TextStyle(fontSize: 16),
+              ),
             ),
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
-              // 다음 버튼 동작
-            },
+            onPressed: _submitSymptom,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
               shape: RoundedRectangleBorder(
@@ -52,11 +127,58 @@ class _SymptomInputScreenState extends State<SymptomInputScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
             ),
             child: const Text(
-              '다음',
+              '완료',
               style: TextStyle(color: Colors.white),
             ),
           ),
           const SizedBox(height: 20),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _responseText != null
+                    ? SingleChildScrollView(
+                  child: Text(
+                    _responseText!,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                )
+                    : const Center(
+                  child: Text(
+                    '응답 메시지가 여기에 표시됩니다.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: ElevatedButton(
+              onPressed: () {
+                // 병원 필터링 항목 선택 페이지로 넘어감
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              ),
+              child: const Text(
+                '다음',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );
