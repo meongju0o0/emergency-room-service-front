@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// MedicationScreen을 사용하기 위해 import
 import 'medication_screen.dart';
 
 class DiseaseCodeScreen extends StatefulWidget {
@@ -33,7 +32,6 @@ class _DiseaseCodeScreenState extends State<DiseaseCodeScreen> {
   @override
   void initState() {
     super.initState();
-    // 만약 이전 화면에서 이미 넘어온 diseaseCodes가 있다면, 초기값으로 세팅 가능
     _currentDiseases.addAll(widget.diseaseCodes);
   }
 
@@ -164,7 +162,6 @@ class _DiseaseCodeScreenState extends State<DiseaseCodeScreen> {
 
           const SizedBox(height: 20),
 
-          /// 선택된 질환 리스트
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -196,7 +193,6 @@ class _DiseaseCodeScreenState extends State<DiseaseCodeScreen> {
 
           const SizedBox(height: 20),
 
-          /// 다음 화면(약물)으로 이동
           ElevatedButton(
             onPressed: () {
               Navigator.push(

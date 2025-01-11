@@ -106,7 +106,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
       );
 
       if (response.statusCode == 200) {
-        // 회원가입 성공
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -121,7 +120,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
           ),
         );
       } else {
-        // 서버에서 보낸 에러 메시지 표시
         final errorData = jsonDecode(response.body);
         _showErrorDialog(errorData['error'] ?? '회원가입 실패');
       }
@@ -157,7 +155,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
       ),
       body: Column(
         children: [
-          /// 검색 및 검색결과 리스트
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -213,7 +210,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
 
           const SizedBox(height: 20),
 
-          /// 선택된 약물 리스트
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -247,7 +243,6 @@ class _MedicationScreenState extends State<MedicationScreen> {
 
           const SizedBox(height: 20),
 
-          /// 회원가입(POST) 완료
           ElevatedButton(
             onPressed: _submitRegistration,
             style: ElevatedButton.styleFrom(
