@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'show_hospital_screen.dart';
+import 'user_update_screen.dart';
 
 class SelectCourseScreen extends StatefulWidget {
   final String email;
@@ -86,6 +87,8 @@ class _SelectCourseScreenState extends State<SelectCourseScreen> {
           MaterialPageRoute(
             builder: (context) => ShowHospitalScreen(
               hospitalData: responseData,
+              token: widget.token,
+              email: widget.email,
             ),
           ),
         );
@@ -126,10 +129,26 @@ class _SelectCourseScreenState extends State<SelectCourseScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('진료 과목 선택'),
+        title: const Text('병원 검색 결과'),
         backgroundColor: Colors.purple.shade50,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserUpdateScreen(
+                    email: widget.email,
+                    token: widget.token,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'user_update_screen.dart';
+
 class ShowHospitalScreen extends StatefulWidget {
   final Map<String, dynamic> hospitalData;
 
-  const ShowHospitalScreen({super.key, required this.hospitalData});
+  final String token;
+  final String email;
+
+  const ShowHospitalScreen({
+    super.key,
+    required this.hospitalData,
+    required this.token,
+    required this.email,
+  });
 
   @override
   State<ShowHospitalScreen> createState() => _ShowHospitalScreenState();
@@ -15,7 +25,7 @@ class _ShowHospitalScreenState extends State<ShowHospitalScreen> {
   final Set<Marker> _markers = {};
 
   final CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(37.2635727, 127.0286009), // y_pos, x_pos
+    target: LatLng(37.2635727, 127.0286009),
     zoom: 14.0,
   );
 
@@ -67,9 +77,26 @@ class _ShowHospitalScreenState extends State<ShowHospitalScreen> {
         backgroundColor: Colors.purple.shade50,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserUpdateScreen(
+                    email: widget.email,
+                    token: widget.token,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
+          // 지도 영역
           SizedBox(
             height: 400,
             child: GoogleMap(
