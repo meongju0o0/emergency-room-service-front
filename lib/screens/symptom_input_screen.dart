@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+// 새로운 화면 import
+import 'select_course_screen.dart';
+
 class SymptomInputScreen extends StatefulWidget {
   final String token;
   final String email;
@@ -127,7 +130,7 @@ class _SymptomInputScreenState extends State<SymptomInputScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
             ),
             child: const Text(
-              '완료',
+              '입력',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -160,11 +163,22 @@ class _SymptomInputScreenState extends State<SymptomInputScreen> {
             ),
           ),
           const SizedBox(height: 20),
+
+          /// 다음 화면으로 이동 (SelectCourseScreen) + email 전달
           Padding(
             padding: const EdgeInsets.all(20),
             child: ElevatedButton(
               onPressed: () {
                 // 병원 필터링 항목 선택 페이지로 넘어감
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SelectCourseScreen(
+                      email: widget.email,
+                      token: widget.token,
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
