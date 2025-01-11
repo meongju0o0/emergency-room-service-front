@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MedicationScreen extends StatefulWidget {
-  const MedicationScreen({super.key});
+  final String email;
+  final String username;
+  final String password;
+  final List<String> diseaseCodes;
+
+  const MedicationScreen({
+    super.key,
+    required this.email,
+    required this.username,
+    required this.password,
+    required this.diseaseCodes,
+  });
 
   @override
   State<MedicationScreen> createState() => _MedicationScreenState();
@@ -11,37 +23,127 @@ class MedicationScreen extends StatefulWidget {
 class _MedicationScreenState extends State<MedicationScreen> {
   final TextEditingController _medicationController = TextEditingController();
   final List<String> _currentMedications = [];
-  final List<String> _dummyMedicationCodes = [
-    'M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07'
-  ];
   List<String> _filteredMedicationCodes = [];
+  List<String> _filteredMedicationNames = [];
+  bool _isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _filteredMedicationCodes = List.from(_dummyMedicationCodes);
+  Future<void> _searchMedications(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        _filteredMedicationCodes = [];
+        _filteredMedicationNames = [];
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      const url = 'http://10.0.2.2:8080/medical/drug_query';
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'drug_name': query}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _filteredMedicationCodes = List<String>.from(data['drug_code'] ?? []);
+          _filteredMedicationNames = List<String>.from(data['drug_name'] ?? []);
+        });
+      } else {
+        setState(() {
+          _filteredMedicationCodes = [];
+          _filteredMedicationNames = [];
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _filteredMedicationCodes = [];
+        _filteredMedicationNames = [];
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _addMedication(String code) {
     if (code.isNotEmpty && !_currentMedications.contains(code)) {
       setState(() {
         _currentMedications.add(code);
-        _medicationController.clear();
-        _filterMedications('');
       });
     }
   }
 
-  void _filterMedications(String query) {
+  void _removeMedication(String code) {
     setState(() {
-      if (query.isEmpty) {
-        _filteredMedicationCodes = List.from(_dummyMedicationCodes);
-      } else {
-        _filteredMedicationCodes = _dummyMedicationCodes
-            .where((code) => code.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
+      _currentMedications.remove(code);
     });
+  }
+
+  Future<void> _submitRegistration() async {
+    final body = {
+      'email': widget.email,
+      'username': widget.username,
+      'password': widget.password,
+      'disease_codes': widget.diseaseCodes,
+      'medicine_codes': _currentMedications,
+    };
+
+    try {
+      const url = 'http://10.0.2.2:8080/users/add';
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        // 회원가입 성공
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('회원가입 성공'),
+            content: const Text('회원가입이 완료되었습니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+                child: const Text('확인'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        // 서버에서 보낸 에러 메시지 표시
+        final errorData = jsonDecode(response.body);
+        _showErrorDialog(errorData['error'] ?? '회원가입 실패');
+      }
+    } catch (e) {
+      _showErrorDialog('서버와의 연결에 실패했습니다.');
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('오류'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -55,6 +157,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
       ),
       body: Column(
         children: [
+          /// 검색 및 검색결과 리스트
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -67,9 +170,9 @@ class _MedicationScreenState extends State<MedicationScreen> {
                   ),
                   child: TextField(
                     controller: _medicationController,
-                    onChanged: _filterMedications,
+                    onChanged: _searchMedications,
                     decoration: const InputDecoration(
-                      hintText: '약물 코드 검색',
+                      hintText: '약물 이름 검색',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(15),
                       suffixIcon: Icon(Icons.search),
@@ -77,33 +180,40 @@ class _MedicationScreenState extends State<MedicationScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.purple.shade50,
-                    borderRadius: BorderRadius.circular(10),
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else
+                  Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.purple.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListView.builder(
+                      itemCount: _filteredMedicationCodes.length,
+                      itemBuilder: (context, index) {
+                        final code = _filteredMedicationCodes[index];
+                        final name = _filteredMedicationNames[index];
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.purple.shade100,
+                            child: const Text('M'), // Medication
+                          ),
+                          title: Text('$code - $name'),
+                          onTap: () {
+                            _addMedication(code);
+                          },
+                        );
+                      },
+                    ),
                   ),
-                  child: ListView.builder(
-                    itemCount: _filteredMedicationCodes.length,
-                    itemBuilder: (context, index) {
-                      final code = _filteredMedicationCodes[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.purple.shade100,
-                          child: const Text('M'),
-                        ),
-                        title: Text(code),
-                        onTap: () {
-                          _addMedication(code);
-                        },
-                      );
-                    },
-                  ),
-                ),
               ],
             ),
           ),
+
           const SizedBox(height: 20),
+
+          /// 선택된 약물 리스트
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -125,9 +235,7 @@ class _MedicationScreenState extends State<MedicationScreen> {
                       trailing: IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          setState(() {
-                            _currentMedications.remove(code);
-                          });
+                          _removeMedication(code);
                         },
                       ),
                     );
@@ -136,26 +244,20 @@ class _MedicationScreenState extends State<MedicationScreen> {
               ),
             ),
           ),
+
           const SizedBox(height: 20),
+
+          /// 회원가입(POST) 완료
           ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            },
+            onPressed: _submitRegistration,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
             ),
-            child: const Text(
-              '완료',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text('완료', style: TextStyle(color: Colors.white)),
           ),
+
           const SizedBox(height: 20),
         ],
       ),
